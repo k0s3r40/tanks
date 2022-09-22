@@ -4,17 +4,17 @@ class PlayerTank {
         this.y = 0;
         this.angle = 0;
         this.speed = 5;
-        this.scene = scene;
-        this.sprite = null;
+        this._scene = scene;
+        this._sprite = null;
 
-        this.leftButton = null;
-        this.rightButton = null;
-        this.upButton = null;
-        this.downButton = null;
+        this._leftButton = null;
+        this._rightButton = null;
+        this._upButton = null;
+        this._downButton = null;
     }
 
     preload() {
-        this.scene.load.image('PlayerTank', 'img/tank2.png');
+        this._scene.load.image('PlayerTank', 'img/tank2.png');
     }
 
     setup() {
@@ -23,38 +23,38 @@ class PlayerTank {
     }
 
     setup_sprite() {
-        this.sprite = this.scene.add.image(400, 400, 'PlayerTank');
-        this.sprite.tint = 0xff00ff;
-        this.sprite.setScale(3);
+        this._sprite = this._scene.add.image(this.x, this.y, 'PlayerTank');
+        this._sprite.tint = 0xff00ff;
+        this._sprite.setScale(3);
     }
 
     setup_controls() {
-        let keyboard = this.scene.input.keyboard;
+        let keyboard = this._scene.input.keyboard;
 
-        this.leftButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
-        this.rightButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
-        this.upButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
-        this.downButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
+        this._leftButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
+        this._rightButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+        this._upButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
+        this._downButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
     }
 
     update(delta) {
-        this.sprite.setDepth(1);
+        this._sprite.setDepth(1);
 
         let controlVector = new Phaser.Math.Vector2();
 
-        if (this.leftButton.isDown) {
+        if (this._leftButton.isDown) {
             controlVector.x -= 1;
         }
 
-        if (this.rightButton.isDown) {
+        if (this._rightButton.isDown) {
             controlVector.x += 1;
         }
 
-        if (this.upButton.isDown) {
+        if (this._upButton.isDown) {
             controlVector.y -= 1;
         }
 
-        if (this.downButton.isDown) {
+        if (this._downButton.isDown) {
             controlVector.y += 1;
         }
 
@@ -63,14 +63,20 @@ class PlayerTank {
             controlVector.scale(this.speed / controlVectorLength);
 
             let targetAngle = controlVector.angle() * 180 / Math.PI;
-
-            //TODO: -90 because the tank sprite is rotated down, need to fix art
-            targetAngle -= 90;
-
-            this.sprite.angle = targetAngle;
+            this.angle = targetAngle;
         }
 
-        this.sprite.x += controlVector.x;
-        this.sprite.y += controlVector.y;
+        this.x += controlVector.x;
+        this.y += controlVector.y;
+
+        this.update_sprite();
+    }
+
+    update_sprite() {
+        this._sprite.x = this.x;
+        this._sprite.y = this.y;
+
+        //-90 because the tank sprite is rotated down
+        this._sprite.angle = this.angle - 90;
     }
 }
