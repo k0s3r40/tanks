@@ -11,23 +11,16 @@ class Game extends Phaser.Scene {
         this.env = [];
         this.min_x = -100;
         this.min_y = -100;
+        this.player_tank = new PlayerTank(this);
     }
 
     preload() {
-        this.load.image('Player', 'img/tank2.png')
+        this.player_tank.preload();
         this.load.spritesheet('Tiles', 'img/tiles.png', {frameWidth: 73, frameHeight: 73})
     }
 
     create() {
-
-
-        this.player = this.add.image(400, 400, 'Player')
-        this.player.tint = 0xff00ff;
-        this.player.setScale(3)
-        this.key_A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
-        this.key_D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
-        this.key_W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
-        this.key_S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
+        this.player_tank.setup();
         this.init_map()
     }
 
@@ -58,8 +51,8 @@ class Game extends Phaser.Scene {
     }
 
     compute_directions(is_forward = true) {
-        let abs_angle = Math.abs(this.player.angle)
-        if (this.player.angle > 0) {
+        let abs_angle = Math.abs(this.player_tank.sprite.angle)
+        if (this.player_tank.sprite.angle > 0) {
             console.log('west')
             if (is_forward) {
                 this.min_x += 10;
@@ -69,7 +62,7 @@ class Game extends Phaser.Scene {
 
 
         }
-        if (this.player.angle < 0) {
+        if (this.player_tank.sprite.angle < 0) {
             console.log('east')
             if (is_forward) {
                 this.min_x -= 10;
@@ -101,23 +94,7 @@ class Game extends Phaser.Scene {
     }
 
     update(delta) {
-
-        if (this.key_A.isDown)
-            this.player.angle -= 5;
-        if (this.key_D.isDown)
-            this.player.angle += 5;
-        if (this.key_W.isDown) {
-            this.compute_directions()
-            this.init_map()
-        }
-        if (this.key_S.isDown) {
-            this.compute_directions(false)
-            this.init_map()
-
-        }
-
-
-        this.player.setDepth(1);
+        this.player_tank.update(delta);
     }
 }
 
@@ -127,6 +104,7 @@ var config = {
     height: 800,
     transparent: true,
     backgroundColor: "#4488AA",
+    antialias: false,
     physics: {
         default: 'arcade',
         arcade: {
