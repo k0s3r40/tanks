@@ -22,6 +22,8 @@ class Game extends Phaser.Scene {
     create() {
         this.player_tank.setup();
         this.init_map()
+
+        this.cameras.main.startFollow(this.player_tank)
     }
 
     init_map() {
@@ -88,9 +90,6 @@ class Game extends Phaser.Scene {
                 this.min_y += 10;
             }
         }
-
-
-
     }
 
     update(delta) {
