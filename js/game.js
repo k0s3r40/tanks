@@ -57,21 +57,6 @@ class Game extends Phaser.Scene {
 
     }
 
-    update_environment() {
-        var arrayLength = this.env.length;
-        console.log(arrayLength)
-        for (var i = 0; i < arrayLength; i++) {
-            this.env[i].destroy();
-        }
-        this.env = [];
-        for (let i = 0; i <= 25 * 73; i += 73) {
-            for (let x = 0; x <= 25 * 73; x += 73) {
-                let data = this.add.sprite(i, x, 'Tiles', getRandomInt(25));
-                this.env.push(data)
-            }
-        }
-    }
-
     compute_directions(is_forward = true) {
         let abs_angle = Math.abs(this.player.angle)
         if (this.player.angle > 0) {
