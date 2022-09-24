@@ -92,8 +92,8 @@ class Game extends Phaser.Scene {
         }
     }
 
-    update(delta) {
-        this.player_tank.update(delta);
+    update(time,delta) {
+        this.player_tank.update(time,delta);
     }
 }
 
