@@ -9,13 +9,17 @@ class Game extends Phaser.Scene {
         super({key: "Game"});
         this.speed = 5;
         this.env = [];
+        this.entities = [];
         this.min_x = -100;
         this.min_y = -100;
+
         this.player_tank = new PlayerTank(this);
     }
 
     preload() {
-        this.player_tank.preload();
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].preload();
+        }
         this.load.spritesheet('Tiles', 'img/tiles.png', {frameWidth: 73, frameHeight: 73})
     }
 
@@ -93,7 +97,9 @@ class Game extends Phaser.Scene {
     }
 
     update(time,delta) {
-        this.player_tank.update(time,delta);
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].update(delta/1000);
+        }
     }
 }
 

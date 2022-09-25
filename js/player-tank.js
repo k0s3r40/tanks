@@ -1,22 +1,20 @@
-class PlayerTank {
-    constructor(scene) {
-        this.x = 0;
-        this.y = 0;
-        this.angle = 0;
+class PlayerTank extends GameEntity {
+    constructor(game) {
+        super(game);
+
         this.speed = 250;
-        this._scene = scene;
-        this._sprite = null;
+        this.shootTimer = 0;
 
         this._leftButton = null;
         this._rightButton = null;
         this._upButton = null;
         this._downButton = null;
-        this.isShooting = false;
+        this._shootButton = null;
     }
 
     preload() {
-        this._scene.load.image('PlayerTank', 'img/tank2.png');
-        this._scene.load.image('Bullet','img/bullet.png');
+        this._game.load.image('PlayerTank', 'img/tank2.png');
+        this._game.load.image('Bullet','img/bullet.png');
     }
 
     setup() {
@@ -25,13 +23,13 @@ class PlayerTank {
     }
 
     setup_sprite() {
-        this._sprite = this._scene.add.image(this.x, this.y, 'PlayerTank');
+        this._sprite = this._game.add.image(this.x, this.y, 'PlayerTank');
         this._sprite.tint = 0xff00ff;
         this._sprite.setScale(3);
     }
 
     setup_controls() {
-        let keyboard = this._scene.input.keyboard;
+        let keyboard = this._game.input.keyboard;
 
         this._leftButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         this._rightButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
@@ -40,12 +38,12 @@ class PlayerTank {
         this._shootButton = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
     }
 
-    update(time,delta) {
+    update(delta) {
         this._sprite.setDepth(1);
 
-        this.update_movement(time,delta);
+        this.update_movement(delta);
 
-        this.update_shooting(time,delta);
+        this.update_shooting(delta);
 
         this.update_sprite();
     }
@@ -58,7 +56,7 @@ class PlayerTank {
         this._sprite.angle = this.angle - 90;
     }
 
-    update_movement(time,delta) {
+    update_movement(delta) {
       let controlVector = new Phaser.Math.Vector2();
 
         if (this._leftButton.isDown) {
@@ -79,23 +77,31 @@ class PlayerTank {
 
         let controlVectorLength = controlVector.length();
         if (controlVectorLength > 0) {
-            controlVector.scale(this.speed / controlVectorLength * delta / 1000);
+            // normalize control vector and scale by speed
+            controlVector.scale(this.speed / controlVectorLength * delta);
+
             let targetAngle = controlVector.angle() * 180 / Math.PI;
             this.angle = targetAngle;
+
+            // alternative:
+            // let targetAngle = Math.atan2(controlVector.y, controlVector.x) * 180 / Math.PI;
         }
 
         this.x += controlVector.x;
         this.y += controlVector.y;
     }
 
-    update_shooting(time,delta) {
-        if(this._shootButton.isDown){
-            this.isShooting = true;
-            this.shootTimer = 7;
+    update_shooting(delta) {
+        if (this.shootTimer > 0) {
+            this.shootTimer -= delta;
+        }
+        else if(this._shootButton.isDown){
+            this.shootTimer = 0.5;
             this.spawn_bullet();
         }
     }
-     spawn_bullet(){
-     let bullet = this._scene.add.image(this.x, this.y, 'Bullet');
-     }
+
+    spawn_bullet(){
+        let bullet = new Bullet(this._game, this);
+    }
 }
